@@ -3,9 +3,8 @@ import 'package:aad_oauth/model/config.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'dart:convert' as convert;
-
 import 'package:http/http.dart' as http;
-
+import 'launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -93,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SecondRoute()),
+              MaterialPageRoute(builder: (context) => Launcher()),
             );
           })
     ]);
@@ -120,8 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+//new
 
-class SecondRoute extends StatelessWidget {
+class Profile extends StatelessWidget {
   final homePage = _MyHomePageState();
   var userInfo = _MyHomePageState.userInfo['given_name'];
   @override
@@ -130,11 +130,18 @@ class SecondRoute extends StatelessWidget {
       appBar: AppBar(
         title: Text("Profile"),
         centerTitle: true,
+        automaticallyImplyLeading: false
       ),
       body:
       Center(
         child: Column(
           children: <Widget>[
+            // Container(
+            //   padding: EdgeInsets.all(10.0),
+            //   child: Image(
+            //     image: AssetImage('assets/user.png')
+            //   )
+            // ),
             Container(
               padding: EdgeInsets.all(10.0),
               child: Text('Firstname: ${_MyHomePageState.userInfo['given_name']}',
@@ -152,17 +159,29 @@ class SecondRoute extends StatelessWidget {
                 )
               )
             ),
-            ElevatedButton(
-              onPressed: () {
-                callAPI();
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => MyHomePage()),
-                // );
-              },
-              child: Text('Logout'),
-
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  callAPI();
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => MyHomePage()),
+                  // );
+                },
+                child: Text('Logout'),
+              ),
             )
+            // ElevatedButton(
+            //   onPressed: () {
+            //     callAPI();
+            //     // Navigator.push(
+            //     //   context,
+            //     //   MaterialPageRoute(builder: (context) => MyHomePage()),
+            //     // );
+            //   },
+            //   child: Text('Logout'),
+            // )
           ],
         )
         // child: ElevatedButton(
