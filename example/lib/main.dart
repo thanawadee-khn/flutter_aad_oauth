@@ -1,6 +1,11 @@
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:aad_oauth/model/config.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'dart:convert' as convert;
+
+import 'package:http/http.dart' as http;
+
 
 void main() => runApp(MyApp());
 
@@ -33,7 +38,10 @@ class _MyHomePageState extends State<MyHomePage> {
     redirectUri: 'https://login.live.com/oauth20_desktop.srf',
   );
   final AadOAuth oauth = AadOAuth(config);
-
+  static var userInfo;
+ // userInfo _MyHomePageState() {
+ //    this.userInfo = userInfo;
+ //  }
   @override
   Widget build(BuildContext context) {
     // adjust window size for browser login
@@ -82,7 +90,11 @@ class _MyHomePageState extends State<MyHomePage> {
       FlatButton(
           child: const Text('Ok'),
           onPressed: () {
-            Navigator.pop(context);
+            // Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SecondRoute()),
+            );
           })
     ]);
     showDialog(context: context, builder: (BuildContext context) => alert);
@@ -92,7 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       await oauth.login();
       var accessToken = await oauth.getAccessToken();
-      showMessage('Logged in successfully, your access token: $accessToken');
+      print(accessToken);
+      userInfo = Jwt.parseJwt(accessToken);
+
+      showMessage('Logged in successfully, your access token: ${userInfo['given_name']}');
+      print(userInfo['given_name']);
     } catch (e) {
       showError(e);
     }
@@ -101,5 +117,79 @@ class _MyHomePageState extends State<MyHomePage> {
   void logout() async {
     await oauth.logout();
     showMessage('Logged out');
+  }
+}
+
+
+class SecondRoute extends StatelessWidget {
+  final homePage = _MyHomePageState();
+  var userInfo = _MyHomePageState.userInfo['given_name'];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Profile"),
+        centerTitle: true,
+      ),
+      body:
+      Center(
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text('Firstname: ${_MyHomePageState.userInfo['given_name']}',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold
+              ))
+            ),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text('Lastname: ${_MyHomePageState.userInfo['family_name']}',
+                style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold
+                )
+              )
+            ),
+            ElevatedButton(
+              onPressed: () {
+                callAPI();
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => MyHomePage()),
+                // );
+              },
+              child: Text('Logout'),
+
+            )
+          ],
+        )
+        // child: ElevatedButton(
+        //   onPressed: () {
+        //     logout();
+        //   },
+        //   child: Text('Logout'),
+        // ),
+      ),
+    );
+  }
+
+  void logout() async {
+    await homePage.oauth.logout();
+    homePage.showMessage('Logged out');
+  }
+
+  void callAPI() async {
+    var url = "https://flutterapp-jirachai.azurewebsites.net/api/getColleagues";
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonResponse =
+      convert.jsonDecode(response.body) as Map<String, dynamic>;
+      var itemCount = jsonResponse['totalItems'];
+      print('Number of books about http: $itemCount.');
+    } else {
+      print('Request failed with status: ${response.statusCode}.');
+    }
   }
 }
