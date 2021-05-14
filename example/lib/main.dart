@@ -38,9 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   );
   final AadOAuth oauth = AadOAuth(config);
   static var userInfo;
- // userInfo _MyHomePageState() {
- //    this.userInfo = userInfo;
- //  }
+
   @override
   Widget build(BuildContext context) {
     // adjust window size for browser login
@@ -106,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(accessToken);
       userInfo = Jwt.parseJwt(accessToken);
 
-      showMessage('Logged in successfully, your access token: ${userInfo['given_name']}');
+      showMessage('Logged in successfully');
       print(userInfo['given_name']);
     } catch (e) {
       showError(e);
@@ -124,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 class Profile extends StatelessWidget {
   final homePage = _MyHomePageState();
   var userInfo = _MyHomePageState.userInfo['given_name'];
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,12 +135,14 @@ class Profile extends StatelessWidget {
       Center(
         child: Column(
           children: <Widget>[
-            // Container(
-            //   padding: EdgeInsets.all(10.0),
-            //   child: Image(
-            //     image: AssetImage('assets/user.png')
-            //   )
-            // ),
+            Container(
+              padding: EdgeInsets.all(30.0),
+              child: Image(
+                image: AssetImage('assets/user.png'),
+                width: 150,
+                height: 150,
+              )
+            ),
             Container(
               padding: EdgeInsets.all(10.0),
               child: Text('Firstname: ${_MyHomePageState.userInfo['given_name']}',
@@ -151,7 +152,7 @@ class Profile extends StatelessWidget {
               ))
             ),
             Container(
-              padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(30.0),
               child: Text('Lastname: ${_MyHomePageState.userInfo['family_name']}',
                 style: TextStyle(
                     fontSize: 20.0,
@@ -159,29 +160,12 @@ class Profile extends StatelessWidget {
                 )
               )
             ),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  callAPI();
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => MyHomePage()),
-                  // );
-                },
-                child: Text('Logout'),
-              ),
+            ElevatedButton(
+              onPressed: () {
+                logout();
+              },
+              child: Text('Logout'),
             )
-            // ElevatedButton(
-            //   onPressed: () {
-            //     callAPI();
-            //     // Navigator.push(
-            //     //   context,
-            //     //   MaterialPageRoute(builder: (context) => MyHomePage()),
-            //     // );
-            //   },
-            //   child: Text('Logout'),
-            // )
           ],
         )
         // child: ElevatedButton(
@@ -195,20 +179,7 @@ class Profile extends StatelessWidget {
   }
 
   void logout() async {
-    await homePage.oauth.logout();
+    await homePage.logout();
     homePage.showMessage('Logged out');
-  }
-
-  void callAPI() async {
-    var url = "https://flutterapp-jirachai.azurewebsites.net/api/getColleagues";
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      var jsonResponse =
-      convert.jsonDecode(response.body) as Map<String, dynamic>;
-      var itemCount = jsonResponse['totalItems'];
-      print('Number of books about http: $itemCount.');
-    } else {
-      print('Request failed with status: ${response.statusCode}.');
-    }
   }
 }
