@@ -2,11 +2,11 @@ import 'package:aad_oauth/aad_oauth.dart';
 import 'package:aad_oauth/model/config.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'dart:convert' as convert;
-import 'package:http/http.dart' as http;
 import 'launcher.dart';
 
 void main() => runApp(MyApp());
+
+bool isLoggedIn = false;
 
 class MyApp extends StatelessWidget {
   @override
@@ -38,6 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   );
   final AadOAuth oauth = AadOAuth(config);
   static var userInfo;
+  void initState() {
+    super.initState();
+    if (isLoggedIn) {
+      logout();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       await oauth.login();
       var accessToken = await oauth.getAccessToken();
-      print(accessToken);
       userInfo = Jwt.parseJwt(accessToken);
-
+      isLoggedIn = true;
       showMessage('Logged in successfully');
-      print(userInfo['given_name']);
     } catch (e) {
       showError(e);
     }
@@ -113,7 +117,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void logout() async {
     await oauth.logout();
-    showMessage('Logged out');
+    isLoggedIn = false;
+    // showMessage('Logged out');
   }
 }
 
@@ -129,7 +134,19 @@ class Profile extends StatelessWidget {
       appBar: AppBar(
         title: Text("Profile"),
         centerTitle: true,
-        automaticallyImplyLeading: false
+        automaticallyImplyLeading: false,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              _MyHomePageState().logout();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          )
+        ],
       ),
       body:
       Center(
@@ -159,27 +176,23 @@ class Profile extends StatelessWidget {
                     fontWeight: FontWeight.bold
                 )
               )
-            ),
-            ElevatedButton(
-              onPressed: () {
-                logout();
-              },
-              child: Text('Logout'),
             )
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => MyHomePage()),
+            //     );
+            //   },
+            //   child: Text('Logout'),
+            // )
           ],
         )
-        // child: ElevatedButton(
-        //   onPressed: () {
-        //     logout();
-        //   },
-        //   child: Text('Logout'),
-        // ),
       ),
     );
   }
 
-  void logout() async {
-    await homePage.logout();
-    homePage.showMessage('Logged out');
-  }
+  // void logout() async {
+  //   await _MyHomePageState().logout();
+  // }
 }

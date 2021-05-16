@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
+import 'main.dart';
 
 class Home extends StatefulWidget {
   static const routeName = '/home';
@@ -26,51 +27,37 @@ class _HomeState extends State<Home> {
 
   var colleagues = [];
   var itemCount = 0;
+
   void initState() {
     super.initState();
     callAPI();
   }
 
   callAPI() {
-    var url = "https://flutterapp-jirachai.azurewebsites.net/api/getColleagues?limit=10";
-    http.get(url).then((response) {
-      setState(() {
-        if (response.statusCode == 200) {
-        var jsonResponse =
-        convert.jsonDecode(response.body) as Map<String, dynamic>;
-        itemCount = jsonResponse['limit'];
-        print('Colleagues count: $itemCount.');
-        colleagues.addAll(jsonResponse['colleagues']);
-        print(colleagues[0]['name']);
-      } else {
-        print('Request failed with status: ${response.statusCode}.');
-      }
+    if (itemCount == 0) {
+      var url = "https://flutterapp-jirachai.azurewebsites.net/api/getColleagues?limit=10";
+      http.get(url).then((response) {
+        setState(() {
+          if (response.statusCode == 200) {
+          var jsonResponse =
+          convert.jsonDecode(response.body) as Map<String, dynamic>;
+          itemCount = jsonResponse['limit'];
+          colleagues.addAll(jsonResponse['colleagues']);
+        } else {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        });
       });
-    });
+    }
   }
-
-// Future<void> callAPI() async {
-//   var url = "https://flutterapp-jirachai.azurewebsites.net/api/getColleagues";
-//   var response = await http.get(url);
-//   if (response.statusCode == 200) {
-//     var jsonResponse =
-//     convert.jsonDecode(response.body) as Map<String, dynamic>;
-//     itemCount = jsonResponse['limit'];
-//     print('Colleagues count: $itemCount.');
-//     colleagues.addAll(jsonResponse['colleagues']);
-//     print(colleagues[0]['name']);
-//   } else {
-//     print('Request failed with status: ${response.statusCode}.');
-//   }
-// }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
         automaticallyImplyLeading: false,
-        centerTitle: true,
+        centerTitle: true
       ),
       body: 
       itemCount > 0
