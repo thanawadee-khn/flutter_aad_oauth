@@ -31,9 +31,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   static final Config config = Config(
-    tenant: '72f988bf-86f1-41af-91ab-2d7cd011db47',
-    clientId: '596aa83e-4e24-498a-87df-aabacddcb92b',
-    scope: 'api://596aa83e-4e24-498a-87df-aabacddcb92b/offline_access',
+    tenant: "YOUR_TENANT_ID",
+    clientId: "YOUR_CLIENT_ID",
+    scope: "openid profile offline_access",
     redirectUri: 'https://login.live.com/oauth20_desktop.srf',
   );
   final AadOAuth oauth = AadOAuth(config);
@@ -118,7 +118,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void logout() async {
     await oauth.logout();
     isLoggedIn = false;
-    // showMessage('Logged out');
   }
 }
 
@@ -177,15 +176,6 @@ class Profile extends StatelessWidget {
                 )
               )
             )
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => MyHomePage()),
-            //     );
-            //   },
-            //   child: Text('Logout'),
-            // )
           ],
         )
       ),
