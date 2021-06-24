@@ -3,7 +3,7 @@
 ### Prerequisite
 
 * ##### Installed [flutter](https://flutter.dev/docs/get-started/install)
-* ##### Set up an editor [here](https://flutter.dev/docs/get-started/install)
+* ##### Set up an editor [here](https://flutter.dev/docs/get-started/editor)
 * ##### Android emulator ([AVD](https://developer.android.com/studio/run/managing-avds) in Android Studio, Android device)
 
 ### Usage
