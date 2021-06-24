@@ -1,4 +1,10 @@
-# OAuth Azure AD
+# OAuth Azure AD (Android)
+
+### Prerequisite
+
+* ##### Installed [flutter](https://flutter.dev/docs/get-started/install)
+* ##### Set up an editor [here](https://flutter.dev/docs/get-started/install)
+* ##### Android emulator ([AVD](https://developer.android.com/studio/run/managing-avds) in Android Studio, Android device)
 
 ### Usage
 
