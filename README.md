@@ -1,7 +1,9 @@
 # OAuth Azure AD
 ### Usage
 For using this library you have to create an azure app at the [Azure App registration portal](https://apps.dev.microsoft.com/). Use native app as platform type (with callback URL: https://login.live.com/oauth20_desktop.srf).
+
 Go to `/example/lib/main.dart`
+
 Afterwards you have to initialize the library as follow:
 
 ```dart
